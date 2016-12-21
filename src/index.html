@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"> -->
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        .load-msg{
+            position: absolute;
+            left:50%;
+            top:50%;
+            font-size:40px;
+            color:#666;
+            -webkit-transform: translate3D(-50%,-50%,0);
+            transform: translate3D(-50%,-50%,0);
+        }
+    </style>
+</head>
+<body style="background:#dbdbdb;">
+<span class="load-msg" id="load-msg"></span>
+<canvas width="750" height="1206" class="game-bg" id="gameView"></canvas>
+</body>
+<script src="./js/flexible.js"></script>
+<script src="./js/createjs.js"></script>
+<script src="./js/canvas.js"></script>
+<script>
+    window.onload = function () {
+        var carGame = {
+            stage: new createjs.Stage("gameView"),//舞台创建
+            container: new createjs.Container(),//创建容器,
+            bgSpeed: 4,
+            imgSpeed: 8,
+            time: 1200,
+            initRed: 0,
+            carBody: null,
+            queue: null,
+            tempImgArray: [],
+            tempRedArray: [],
+            redText: null,
+            redFlag: true,
+            image1: new createjs.Bitmap("./img/bg.png"),//创建位图
+            image2: new createjs.Bitmap("./img/bg.png"),//创建位图,
+            arrAyUnique: function (arr) {//数组去重
+                arr.sort(function (a, b) {
+                    return a - b;
+                });
+                var result = [arr[0]];
+                for (var i = 1; i < arr.length; i++) {
+                    if (arr[i] !== result[result.length - 1]) {
+                        result.push(arr[i]);
+                    }
+                }
+                return result;
+            },
+            handleImg: function (obj) {
+                var pt = obj.localToLocal(Math.random() * 100, Math.random() * 100, this.carBody);
+                if (this.carBody.hitTest(pt.x, pt.y)) {
+                    obj.visible = false;
+                    if (/red.png/.test(obj.image.src)) {
+                        obj.tickEnabled = false;
+                        this.tempRedArray.push(obj.id);
+                        //去重red.id
+                        var temp = this.arrAyUnique(this.tempRedArray);
+                        this.initRed = temp.length;
+                        this.redText.text = "已抢到红包个数：" + this.initRed;
+
+                    } else {
+                        this.container.removeChild(obj);
+                        createjs.Sound.play("sound");
+                        createjs.Sound.removeSound("victory");
+                        alert("GAME OVER!");
+                        createjs.Sound.stop();//停止背景音乐播放
+                        createjs.Ticker.removeAllEventListeners();
+                    }
+                }
+            }
+        };
+        //初始化
+        carGame.init = function () {
+            createjs.Touch.enable(this.stage);
+            this.image2.y = -this.stage.canvas.height;//设置位图2y轴位置
+            //生成roadDom
+            var roadHtml = document.createElement('div');
+            roadHtml.id = 'road';
+            document.body.appendChild(roadHtml);
+            var roadDom = new createjs.DOMElement(roadHtml);
+
+            //红包或者炸弹信息
+            var redBitMap = new createjs.Bitmap('./img/red.png');
+            var boomBitMap = new createjs.Bitmap('./img/boom.png');
+            this.tempImgArray.push(redBitMap, boomBitMap);
+
+
+            //显示红包个数文字
+            this.redText = new createjs.Text("已抢到红包个数：" + this.initRed, "28px Arial", "#ff7700");
+            this.redText.x = 50;
+            this.redText.y = 10;
+
+            //生成小车
+            var carImg = './img/player.png';
+            this.carBody = new createjs.Bitmap(carImg);
+            //小车大小与设置x轴y轴位置
+            this.carBody.scaleX = 0.9;
+            this.carBody.scaleY = 0.9;
+            this.carBody.x = 324;//小车x轴初始位置
+            this.carBody.y = this.stage.canvas.height - 230;//小车y轴初始位置
+
+            //文件加载
+            var _this = this;
+            this.queue = new createjs.LoadQueue();
+            this.queue.installPlugin(createjs.Sound);
+            this.queue.loadManifest([
+                {
+                    id: "sound",
+                    src: "./mp3/boom.mp3"
+                }, {
+                    id: "victory",
+                    src: "./mp3/victory.mp3"
+                }, {
+                    id: "bigBg",
+                    src: "./img/bg.png"
+                }
+            ]);
+            //文件加载进程
+            this.queue.on("progress", function() {
+                document.querySelector("#load-msg").innerText = "加载中"+parseInt(_this.queue.progress*100)+"%...";
+                //加载完成把进度条隐藏
+                if(parseInt(_this.queue.progress*100) === 100){
+                    document.querySelector("#load-msg").style.display = "none";
+                }
+                //console.log("Progress:", parseInt(_this.queue.progress*100), event.progress);
+            });
+            //文件加载完成执行
+            this.queue.addEventListener("complete", function () {
+                console.log("加载完成，游戏开始！");
+                createjs.Sound.play("victory");
+                _this.stage.addChild(_this.container);//将容器添加到舞台
+                _this.container.addChild(_this.image1);//将位图1添加到容器
+                _this.container.addChild(_this.image2);//将位图2添加到容器
+                _this.stage.addChild(roadDom);//将roadDom添加到容器
+                _this.container.addChild(_this.redText);//将红包个数
+                _this.container.addChild(_this.carBody);//将小车的位图添加到容器
+                //调用生成炸弹或者红包函数
+                _this.createImages();
+                //小车拖动
+                _this.moveCar();
+                //背景无限滚动
+                createjs.Ticker.addEventListener("tick", function () {
+                    _this.handleTick(_this.image1, _this.image2);
+                    _this.stage.update();
+                });
+                createjs.Ticker.setFPS(60);//设置帧频
+            });
+        };
+        //背景图无限运动
+        carGame.handleTick = function (image1, image2) {
+            image1.y += this.bgSpeed;
+            image2.y += this.bgSpeed;
+            if (Math.abs(image1.y) >= this.stage.canvas.height) {
+                image1.y = 0;
+                image2.y = -this.stage.canvas.height;
+            }
+        };
+
+        //生成红包或者炸弹
+        carGame.createImages = function () {
+            var roadDom = document.getElementById('road');
+            var minX = Math.ceil(roadDom.offsetLeft * (750 / document.body.clientWidth));
+            var maxX = minX * 3;
+            var index = parseInt(Math.random() * 2);//随机生成0or1的随机数
+            var red = this.tempImgArray[index].clone();//获取到图片地址
+            //设置左边红包或者炸弹x轴位置
+
+            //设置红包或者炸点显示x轴位置
+            red.x = minX + (maxX - minX) * Math.random() * 0.72;
+            red.y = -150;
+
+            this.container.addChild(red);
+            //添加一个监听器
+            var _this = this;
+            //判断红包是否碰撞
+
+            createjs.Tween.get(red).to({y: _this.stage.canvas.height}, 2500).addEventListener("change", function () {
+                _this.handleImg(red);
+                if (red.y >= _this.stage.canvas.height) {
+                    _this.createImages();
+                }
+            });
+        };
+
+        //拖动小车
+        carGame.moveCar = function () {
+            var _this = this;
+            var roadDom = document.getElementById('road');
+            var minX = Math.ceil(roadDom.offsetLeft * (750 / document.body.clientWidth));
+            var maxX = minX * 3;
+
+            _this.carBody.on("pressmove", function (evt) {
+                //判断是否拖出了左右上下范围
+                if (evt.stageX - _this.carBody.getBounds().width / 2 < minX || evt.stageX + _this.carBody.getBounds().width / 2 > maxX || evt.stageY < _this.carBody.getBounds().height / 2 || evt.stageY > document.body.clientHeight - 20) {
+                    return;
+                }
+                evt.currentTarget.x = evt.stageX - 51;
+                evt.currentTarget.y = evt.stageY - 108;
+            });
+        };
+        carGame.init();
+    };
+
+</script>
+</html>

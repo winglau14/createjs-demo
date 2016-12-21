@@ -1,0 +1,162 @@
+@charset"utf-8";
+
+/*********** screen配置 ***********/
+@screen: 750;		//设计图宽度
+@remSize:  75;		//1rem对应的px值(设计图按照750计算)
+
+//公用类
+
+//@slef:实际大小 如：10 不带单位px
+//@par:父级宽度  如：320 不带单位px
+//@t:倍数 如：2.25倍(320的稿) 1.5倍(480的稿) 1.125倍(640的稿) 1倍(720的稿)
+//ps:以上三个参数都不带单位px
+//转换为rem
+.toRem (@self){
+	@rem:@self/@remSize*1rem;
+}
+//转换为百分比
+.toPercentage (@numerato,@denominator){
+	@percentage:@numerato/@denominator*100%;
+}
+//border-radius 
+.borderRadius (@radius){
+	border-radius: @radius/@remSize*1rem;
+}
+
+//外边距rem换算
+.marginTop(@slef){margin-top:@slef/@remSize*1rem;}
+.marginRight(@slef){margin-right:@slef/@remSize*1rem;}
+.marginBottom(@slef){margin-bottom:@slef/@remSize*1rem;}
+.marginLeft(@slef){margin-left:@slef/@remSize*1rem;}
+.margin2(@vertical,@horizontal){
+	margin: @vertical/@remSize*1rem @horizontal/@remSize*1rem;
+}
+.margin3(@top,@right,@bottom){
+	margin: @top/@remSize*1rem @right/@remSize*1rem @bottom/@remSize*1rem 0;
+}
+.margin4(@top,@right,@bottom,@left){
+	margin: @top/@remSize*1rem @right/@remSize*1rem @bottom/@remSize*1rem @left/@remSize*1rem;
+}
+
+//内边距rem换算
+.paddingTop(@slef){padding-top:@slef/@remSize*1rem;}
+.paddingRight(@slef){padding-right:@slef/@remSize*1rem;}
+.paddingBottom(@slef){padding-bottom:@slef/@remSize*1rem;}
+.paddingLeft(@slef){padding-left:@slef/@remSize*1rem;}
+.padding2(@vertical,@horizontal){
+	padding: @vertical/@remSize*1rem @horizontal/@remSize*1rem;
+}
+.padding3(@top,@right,@bottom){
+	padding: @top/@remSize*1rem @right/@remSize*1rem @bottom/@remSize*1rem 0;
+}
+.padding4(@top,@right,@bottom,@left){
+	padding: @top/@remSize*1rem @right/@remSize*1rem @bottom/@remSize*1rem @left/@remSize*1rem;
+}
+
+//外边距百分比换算
+.marginTopP(@slef,@par){margin-top:@slef/@par*100%;}
+.marginRightP(@slef,@par){margin-right:@slef/@par*100%;}
+.marginBottomP(@slef,@par){margin-bottom:@slef/@par*100%;}
+.marginLeftP(@slef,@par){margin-left:@slef/@par*100%;}
+
+//内边距百分比换算
+.paddingTopP(@slef,@par){padding-top:@slef/@par*100%;}
+.paddingRightP(@slef,@par){padding-right:@slef/@par*100%;}
+.paddingBottomP(@slef,@par){padding-bottom:@slef/@par*100%;}
+.paddingLeftP(@slef,@par){padding-left:@slef/@par*100%;}
+
+//宽度与高度rem换算
+.widthSingle(@slef){width:@slef/@remSize*1rem;}
+.width(@slef){width:@slef/@remSize*1rem;height:@slef/@remSize*1rem;}
+.heightSingle(@slef){height:@slef/@remSize*1rem;}
+.minHeight(@slef){min-height:@slef/@remSize*1rem;}
+.minWidth(@slef){min-width:@slef/@remSize*1rem;}
+
+//模块百分比换算并水平居中
+.sectionWidth(@slef,@par){width:@slef/@par*100%;/* margin:0 auto; */}
+.sectionHeight(@slef,@par){height:@slef/@par*100%;}
+.maxWidthP(@slef,@par){max-width:@slef/@par*100%;}
+
+//行高rem换算
+.lineHeight(@slef){line-height:@slef/@remSize*1rem;}
+
+//字体类型
+.fontFamily(@fontType){font-family:@fontType;}
+.fontWeight(@fontType){font-weight:@fontType;}
+
+//字体大小rem换算
+.fontSize(@slef){font-size:@slef/@remSize*1rem;}
+
+//定位top/left/bottom/right热门换算
+.top(@slef){top:@slef/@remSize*1rem;}
+.left(@slef){left:@slef/@remSize*1rem;}
+.bottom(@slef){bottom:@slef/@remSize*1rem;}
+.right(@slef){right:@slef/@remSize*1rem;}
+.topP(@slef,@par){top:@slef/@par*100%;}
+.leftP(@slef,@par){left:@slef/@par*100%;}
+.bottomP(@slef,@par){bottom:@slef/@par*100%;}
+.rightP(@slef,@par){right:@slef/@par*100%;}
+
+//边框top/left/right/bottom宽度定义
+.borderLeft(@slef){border-left-width:@slef/@remSize*1rem;}
+.borderTop(@slef){border-top-width:@slef/@remSize*1rem;}
+.borderRight(@slef){border-right-width:@slef/@remSize*1rem;}
+.border(@slef){border-width:@slef/@remSize*1rem;}
+.border2(@a,@b){border-width:@a/@remSize*1rem @b/@remSize*1rem;};
+//border-radius
+.borderRadius(@slef){border-radius:@slef/@remSize*1rem;}
+.borderRadiusTr(@slef){border-top-right-radius:@slef/@remSize*1rem;}
+.borderRadiusBr(@slef){border-bottom-right-radius:@slef/@remSize*1rem;}
+.borderRadiusTl(@slef){border-top-left-radius:@slef/@remSize*1rem;}
+.borderRadiusBl(@slef){border-bottom-left-radius:@slef/@remSize*1rem;}
+
+//位移
+.translate(@slef1,@slef2,@slef3){-webkit-transform:translate3d(@slef1/@remSize*1rem,@slef2/@remSize*1rem,@slef3/@remSize*1rem);transform:translate3d(@slef1/@remSize*1rem,@slef2/@remSize*1rem,@slef3/@remSize*1rem);}
+
+//盒子布局
+.webBox{
+	display: -webkit-box;
+	display: box;
+	-webkit-box-align:center;
+	-webkit-justify-content:space-between;
+	justify-content:space-between;
+	-webkit-box-pack: justify;
+	box-pack: justify;
+}
+//多行省略号
+.eills(@self){
+	overflow : hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: @self;
+	-webkit-box-orient: vertical;
+}
+.backgroundP(@offsetX,@poorWidth,@offsetY,@poorHeight){
+	background-position:@offsetX*100%/@poorWidth @offsetY*100%/@poorHeight;
+}
+.display-box-hc() {
+	-webkit-box-pack: center;
+	-moz-box-pack: center;
+	-ms-flex-align: center;
+
+	-webkit-align-items: center;
+	-moz-align-items: center;
+	align-items: center;
+}
+
+.display-box-vc() {
+	-webkit-box-align: center;
+	-moz-box-align: center;
+	-ms-flex-pack: center;
+
+	-webkit-justify-content: center;
+	-moz-justify-content: center;
+	justify-content: center;
+}
+
+.display-box-hor-justify {
+	-moz-box-pack: justify;
+	-webkit-box-pack: justify;
+	-o-box-pack: justify;
+	box-pack: justify;
+}

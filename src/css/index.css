@@ -1,0 +1,39 @@
+@charset "utf-8";
+/*********** screen配置 ***********/
+.webBox {
+  display: -webkit-box;
+  display: box;
+  -webkit-box-align: center;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-pack: justify;
+  box-pack: justify;
+}
+.display-box-hor-justify {
+  -moz-box-pack: justify;
+  -webkit-box-pack: justify;
+  -o-box-pack: justify;
+  box-pack: justify;
+}
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+.game-bg {
+  display: block;
+  position: absolute;
+}
+#road {
+  width: 49.33333333%;
+  /* margin:0 auto; */
+  height: 100%;
+  margin-left: 25.33333333%;
+  margin-right: 25.33333333%;
+  z-index: -1;
+}

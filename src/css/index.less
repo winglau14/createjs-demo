@@ -1,0 +1,21 @@
+@import url('config.less');
+html,body{
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+}
+*{
+	margin:0;
+	padding:0;
+}
+.game-bg{
+	display: block;
+	position: absolute;
+}
+#road{
+	.sectionWidth(370,750);
+	height:100%;
+	.marginLeftP(190,750);
+	.marginRightP(190,750);
+	z-index:-1;
+}
